@@ -14,7 +14,7 @@ st.title('Visit Paris with your favorite movie!')
 # st.write(tournages_json.convert_to_feature_collection())
 
 
-tournages = gpd.read_file("lieux_tournage_paris.shp")
+tournages = gpd.read_file("lieux_tournage_paris.shp", encoding='utf-8')
 
 tournages = tournages.drop("geometry", axis=1)
 
