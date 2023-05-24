@@ -9,22 +9,24 @@ import requests
 
 st.title('Visit Paris with your favorite movie!')
 
-# url_tournages = 'https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/lieux-de-tournage-a-paris/exports/geojson?lang=fr&timezone=Europe%2FBerlin'
-# tournages_json = folium.GeoJson(url_tournages, name="lieux de tournages")
-# st.write(tournages_json.convert_to_feature_collection())
+url_tournages = 'https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/lieux-de-tournage-a-paris/exports/geojson?lang=fr&timezone=Europe%2FBerlin'
+response = requests.get(url_tournages)
+data = response.json()
+tournages = pd.DataFrame.from_dict(pd.json_normalize(data['features']), orient='columns')
+tournages.drop(['type', 'geometry.coordinates', 'geometry.type', 'properties.geo_point_2d.lon', 'properties.geo_point_2d.lat'], axis=1, inplace=True)
+tournages.columns = [c.replace('properties.', '') for c in tournages.columns.tolist()]
 
+#tournages = gpd.read_file("lieux-de-tournage-a-paris.shp", encoding='utf-8')
 
-tournages = gpd.read_file("lieux_tournage_paris.shp", encoding='utf-8')
+#tournages = tournages.drop("geometry", axis=1)
 
-tournages = tournages.drop("geometry", axis=1)
+movie_sel = st.selectbox('Select a movie', tournages.nom_tournage.unique())
 
-movie_sel = st.selectbox('Select a movie', tournages.nom_tourna.unique())
-
-movie_places = tournages[tournages['nom_tourna'] == movie_sel]
+movie_places = tournages[tournages['nom_tournage'] == movie_sel]
 
 #st.dataframe(movie_places)
 
-st.write(f"{movie_sel} is a {movie_places['type_tourn'].unique()[0].lower()} shot in {movie_places['annee_tour'].unique()[0]}.") # by {movie_places['nom_realis'].unique()[0]}
+st.write(f"{movie_sel} is a {movie_places['type_tournage'].unique()[0].lower()} shot in {movie_places['annee_tournage'].unique()[0]}.") # by {movie_places['nom_realisateur'].unique()[0]}
 
 # Create a matrix of places, with each row being a location in 2-space (function works in n-dimensions).
 places = movie_places[["coord_x", "coord_y"]].to_numpy()
