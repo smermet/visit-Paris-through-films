@@ -14,7 +14,7 @@ st.title('Visit Paris with your favorite movie!')
 # st.write(tournages_json.convert_to_feature_collection())
 
 
-tournages = gpd.read_file("lieux_tournage_paris.shp")
+tournages = gpd.read_file("lieux_tournage_paris.shp", encoding='utf-8')
 
 tournages = tournages.drop("geometry", axis=1)
 
@@ -24,7 +24,7 @@ movie_places = tournages[tournages['nom_tourna'] == movie_sel]
 
 #st.dataframe(movie_places)
 
-st.write(f"{movie_sel} is a {movie_places['type_tourn'][0]} registrered by {movie_places['nom_realis'][0]} in {movie_places['annee_tour'][0]}.")
+st.write(f"{movie_sel} is a {movie_places['type_tourn'].unique()[0].lower()} shot in {movie_places['annee_tour'].unique()[0]}.") # by {movie_places['nom_realis'].unique()[0]}
 
 # Create a matrix of places, with each row being a location in 2-space (function works in n-dimensions).
 places = movie_places[["coord_x", "coord_y"]].to_numpy()
