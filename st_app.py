@@ -18,7 +18,7 @@ tournages = gpd.read_file("lieux_tournage_paris.shp", encoding='utf-8')
 
 tournages = tournages.drop("geometry", axis=1)
 
-movie_sel = st.sidebar.selectbox('Select a movie', tournages.nom_tourna.unique())
+movie_sel = st.selectbox('Select a movie', tournages.nom_tourna.unique())
 
 movie_places = tournages[tournages['nom_tourna'] == movie_sel]
 
@@ -62,7 +62,7 @@ with st.spinner('Calculating distances...'):
 
             tmp_place = row
 
+    st.write(f'These {len(movie_places)} filming locations in Paris could be visited by walking {round(distance, 2)} km in {int(duration)}h{int(round((duration % 1) * 60))}.')
     # Display the map using folium_static
     st_data = folium_static(m, width=700)
 
-    st.write(f'These {len(movie_places)} filming locations in Paris could be visited by walking {round(distance, 2)} km in {int(duration)}h{int(round((duration % 1) * 60))}.')
